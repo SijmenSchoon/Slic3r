@@ -727,17 +727,22 @@ size_t PresetCollection::update_tab_ui(wxBitmapComboBox *ui, bool show_incompati
 // Return true if the dirty flag changed.
 bool PresetCollection::update_dirty_ui(wxBitmapComboBox *ui)
 {
+    printf("this->update_dirty_ui()\n");
     wxWindowUpdateLocker noUpdates(ui);
     // 1) Update the dirty flag of the current preset.
     bool was_dirty = this->get_selected_preset().is_dirty;
+    printf("this->get_selected_preset(): %s\n", this->get_selected_preset().name.c_str());
     bool is_dirty  = current_is_dirty();
     this->get_selected_preset().is_dirty = is_dirty;
     this->get_edited_preset().is_dirty = is_dirty;
     // 2) Update the labels.
+    printf("this->get_selected_preset(): count: %d\n", ui->GetCount());
     for (unsigned int ui_id = 0; ui_id < ui->GetCount(); ++ ui_id) {
         std::string   old_label    = ui->GetString(ui_id).utf8_str().data();
         std::string   preset_name  = Preset::remove_suffix_modified(old_label);
+        printf("this->get_selected_preset(): name of %d: %s\n", ui_id, preset_name.c_str());
         const Preset *preset       = this->find_preset(preset_name, false);
+        printf("this->get_selected_preset(): preset of %d: %s\n", ui_id, preset ? preset->name.c_str() : "null");
         assert(preset != nullptr);
 		if (preset != nullptr) {
 			std::string new_label = preset->is_dirty ? preset->name + g_suffix_modified : preset->name;
